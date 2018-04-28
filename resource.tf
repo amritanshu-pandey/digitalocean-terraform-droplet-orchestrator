@@ -6,6 +6,8 @@ variable "droplet_ssh_keys_fingerprints" {}
 variable "firewall_name" {}
 variable "domain_name" {}
 variable "ssh_client_private_key" {}
+variable "primary_user_name" {}
+variable "ssh_client_pub_key" {}
 
 resource "digitalocean_droplet" "droplet1" {
   image		= "${var.droplet_image}"
@@ -24,6 +26,7 @@ resource "digitalocean_droplet" "droplet1" {
   provisioner "remote-exec" {
     inline = [
       "#!/bin/bash",
+      "set -eu",
 
       "# Create Information.txt",
       "echo 'Name: ${digitalocean_droplet.droplet1.name}' >> ~/information.txt",
@@ -42,8 +45,41 @@ resource "digitalocean_droplet" "droplet1" {
       "sudo apt dist-upgrade -y",
 
       "# Install softwares",
-      "sudo apt install curl git wget build-essential -y",
-      "curl https://get.docker.com | bash"
+      "sudo apt install curl git neofetch vim wget -y",
+      
+      "#Install Docker",
+      <<EOF
+      sudo apt-get install -y \
+        apt-transport-https \
+        ca-certificates \
+        software-properties-common
+        
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu artful stable"
+
+        sudo apt-get update
+
+        sudo apt-get install -y docker-ce docker-compose
+      EOF
+      ,
+
+      "echo - Create user, setup ssh public key and add to group docker",
+      "sudo useradd -m -s /bin/bash ${var.primary_user_name}",
+      "sudo echo '${var.primary_user_name} ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/${var.primary_user_name}",
+      "mkdir -p /home/amritanshu/.ssh",
+      "echo '${var.ssh_client_pub_key}' >> /home/${var.primary_user_name}/.ssh/authorized_keys",
+      "chown -R ${var.primary_user_name}:${var.primary_user_name} /home/${var.primary_user_name}/.ssh",
+      "chmod -R 700 /home/${var.primary_user_name}/.ssh",
+      "usermod -aG docker ${var.primary_user_name}",
+      "cp /root/information.txt /home/${var.primary_user_name}/",
+      "echo '\nneofetch\n' >> /home/${var.primary_user_name}/.bashrc",
+      "chown ${var.primary_user_name}:${var.primary_user_name} /home/${var.primary_user_name}/information.txt",
+      "echo - user ${var.primary_user_name} setup succesfully",
+
+      "echo - disable root ssh access",
+      "sed -i 's/PermitRootLogin yes/PermitRootLogin No/g' /etc/ssh/sshd_config",
+      "echo - root ssh access will be disabled upon reboot"
     ]
   }
 }

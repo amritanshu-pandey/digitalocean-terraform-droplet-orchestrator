@@ -14,6 +14,7 @@ git clone git@github.com:amritanshu-pandey/digitalocean-terraform-droplet-orches
 ```
 - Copy file `terraform.tfvars.sample` as `terraform.vars` at the same path
 and fill the required information.
+- Execute command `terraform init` to initiate terraform plugins
 - Execute command `terraform validate` to check for any mistakes in terraform files
 - Execute command `terraform plan -out plan.out` to generate the execution plan and
 save the same in a file named `plan.out`
