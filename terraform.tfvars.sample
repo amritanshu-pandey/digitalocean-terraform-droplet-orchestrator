@@ -1,0 +1,24 @@
+do_token = "<your token here>"
+
+droplet_name = "<droplet_name>"
+#Replace by the desired image
+# Use DigitalOcean API to find all images
+# https://api.digitalocean.com/v2/images?type=distribution&per_page=999
+droplet_image = "ubuntu-17-10-x64"
+# Replace by the desired region
+# Use DigitalOcean API to find all regions
+# https://api.digitalocean.com/v2/regions
+droplet_region = "sgp1"
+# Replace by the desired size
+# Use DigitalOcean API to find all droplet sizes
+# https://api.digitalocean.com/v2/sizes
+droplet_size = "s-1vcpu-2gb"
+droplet_ssh_keys_fingerprints = "<SSH Public key fingerprint here>"
+
+firewall_name = "firewall name here"
+domain_name = "<domain name here>"
+
+ssh_client_private_key = <<EOF
+<SSH provate key here>
+<Used by the provisioner script>
+EOF
