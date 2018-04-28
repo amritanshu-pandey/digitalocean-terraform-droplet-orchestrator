@@ -4,7 +4,7 @@ Create Pre-Provisioned DigitalOcean droplets and associated firewalls and
 domain name associations using Terraform.
 
 ## Prerequisites 
-- Terraform binary installed on client machine ([download here]([https://www.terraform.io/downloads.html))
+- Terraform binary installed on client machine ([download here](https://www.terraform.io/downloads.html))
 - DigitalOcean API key ([Refer to this link for generating API key](https://www.digitalocean.com/community/tutorials/how-to-use-the-digitalocean-api-v2))
 
 ## How to provision DIgitalocean droplets
