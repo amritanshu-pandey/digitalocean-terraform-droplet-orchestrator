@@ -111,6 +111,12 @@ resource "digitalocean_record" "portainer" {
   value  = "${digitalocean_droplet.droplet1.ipv4_address}"
 }
 
+resource "digitalocean_record" "www" {
+  domain = "${digitalocean_domain.default.name}"
+  type   = "A"
+  name   = "www"
+  value  = "${digitalocean_droplet.droplet1.ipv4_address}"
+}
 
 resource "null_resource" "configure_droplet1" {
 
@@ -126,7 +132,7 @@ provisioner "remote-exec" {
       "#!/bin/bash",
       "echo - generate SSL certificate for domain ${var.domain_name}",
       "sudo systemctl stop nginx",
-      "echo 'N' | sudo /opt/letsencrypt/letsencrypt-auto certonly --agree-tos --staging --keep-until-expiring --non-interactive --standalone -d ${var.domain_name} -d ${var.registry_domain_name} -d ${var.portainer_domain_name} --keep --expand --email ${var.letsencrypt_email}",
+      "echo 'N' | sudo /opt/letsencrypt/letsencrypt-auto certonly --agree-tos --keep-until-expiring --non-interactive --standalone -d ${var.domain_name} -d ${var.registry_domain_name} -d ${var.portainer_domain_name} --keep --expand --email ${var.letsencrypt_email}",
       "sudo mkdir /srv/docker-registry",
       "sudo mkdir /srv/portainer",
       "sudo mkdir /srv/nginx",
